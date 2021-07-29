@@ -43,9 +43,9 @@ console.log("Settings init");
 				plugins = plugins.concat( getTexareaAsArray("#woocommerce_plugins") );
 			}
 
-			console.log("full theme list", themes);
+			// console.log("full theme list", themes);
 	
-			// await installProcess(themes, plugins, "results");
+			await installProcess(themes, plugins, "results");
 			return $installBtn.prop('disabled', false)
 
 		} catch(e) {
@@ -89,15 +89,15 @@ console.log("Settings init");
 			for (const [type, theme] of Object.entries(themes)) {
 
 				// Skip if no theme is set
-				if( !theme ) continue;
+				if( !theme.method ) continue;
 
-				logMessage(logId, `Installing ${theme}`);
+				const activate = themes.child.method ? type == 'child' : type == 'main';
 
-				const activate = themes.child ? type == 'child' : type == 'main';
-
-
-				const installResult = await installTheme(theme, activate, logId);
-				console.log( "install results", installResult );
+				if( theme.method == 'zip ') {
+					logMessage(logId, `Installing ${theme.url}`);
+					const installResult = await installTheme(theme.url, activate, logId);
+					console.log( "install results", installResult );
+				}
 				
 				logMessage(logId, installResult.message );
 
